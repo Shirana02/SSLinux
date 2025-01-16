@@ -1,0 +1,4 @@
+#!/bin/sh
+ScriptDir=`which todo`
+DataFile=`echo $ScriptDir | sed 's/\/todo$//'`
+vim ${DataFile}/Data/todo.txt

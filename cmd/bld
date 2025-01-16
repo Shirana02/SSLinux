@@ -1,0 +1,39 @@
+#!/bin/sh
+if [ -f ./bld.target ]
+then
+	target=`cat ./bld.target | sed -z 's/\n/ /g'`
+fi
+
+#import other dir
+if [ -f ./bld.include ]
+then
+	orgPath=`pwd`
+	echo "" > $orgPath"/.bld.include.autotarget"
+	for currentPath in `cat ./bld.include`
+		do 
+			cd $currentPath
+			find `pwd` -maxdepth 1 | grep -E '\.s$' >> $orgPath"/.bld.include.autotarget"
+		done
+	cd $orgPath
+	otherTarget=`cat ./.bld.include.autotarget | sed -z 's/\n/ /g'`
+fi
+
+echo targets = $target $otherTarget
+gcc $target $otherTarget -lc
+
+if [ $# -eq 1 ]
+then
+	if [ $1 = "r" ]
+	then
+		if [ $? -eq 0 ]
+		then
+			echo ---stdio---
+			./a.out
+			result=$?
+			echo "\n-----------"
+			echo "return:"$result
+		else
+			echo build failed
+		fi
+	fi
+fi
