@@ -1,5 +1,4 @@
 # User defined
-sandbox/
 cmd/Data/*
 
 # Prerequisites
