@@ -1,42 +1,28 @@
 #include "term.h"
+#include "cst.h"
 #include <stdio.h>
 #define Cntl 96
 #define Shift 32
 
 int main(void){
-	struct termios oldtm, newtm;
-	tm_get_termios(&oldtm);
-	tm_get_termios(&newtm);
-
-	tm_edit_termios_noncanonical(&newtm);
-	tm_set_termios(&newtm);
-
-	int c;
-	fflush(stdout);
-	tm_clear();
-	tm_mvOrg();
-
-printf("hogefugaereki\nhohohohhohohohhoh");
-	while(1){
-		c = getc(stdin);
-		switch (c){
-			case 'k': tm_mvUp(); break;
-			case 'j': tm_mvDown(); break;
-			case 'h': tm_mvLeft(); break;
-			case 'l': tm_mvRight(); break;
-			case 'k'-Shift: tm_mvUp7(); break;
-			case 'j'-Shift: tm_mvDown7(); break;
-			case 'h'-Shift: tm_mvLeft7(); break;
-			case 'l'-Shift: tm_mvRight7(); break;
-			case 'r' : tm_setRevert(); break;
-			case '0' : tm_resetFont(); break;
-			default : break;
+	cst *cstp = cst_make(16);
+	char c = 'a';
+	for(c = 'a'; c <= 'z'; c++){
+		char idx = c - 'a';
+		if(cst_isOOR(cstp, idx)){
+			cst *oldcstp = cstp;
+			cstp = cst_sizeup(cstp);
+			if(cstp == oldcstp) goto Exception;
 		}
-		fflush(stdout);
+		cst_access(cstp, idx) = c;
+		cst_access(cstp, idx+1) = '\0';
+		puts(cst_getptr(cstp,0));
 	}
-
-	tm_resetFont();
-	tm_set_termios(&oldtm);
 	return 0;
+
+	Exception:
+	fflush(stdout);
+	printf("\nException\n");
+	return 1;
 }
 	
