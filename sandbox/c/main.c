@@ -1,28 +1,27 @@
 #include "term.h"
 #include "cst.h"
+#include "plist.h"
 #include <stdio.h>
 #define Cntl 96
 #define Shift 32
 
-int main(void){
-	cst *cstp = cst_make(16);
-	char c = 'a';
-	for(c = 'a'; c <= 'z'; c++){
-		char idx = c - 'a';
-		if(cst_isOOR(cstp, idx)){
-			cst *oldcstp = cstp;
-			cstp = cst_sizeup(cstp);
-			if(cstp == oldcstp) goto Exception;
-		}
-		cst_access(cstp, idx) = c;
-		cst_access(cstp, idx+1) = '\0';
-		puts(cst_getptr(cstp,0));
-	}
-	return 0;
+#include <stdlib.h>
 
-	Exception:
-	fflush(stdout);
-	printf("\nException\n");
-	return 1;
+int main(void){
+	plist *list = plist_make(sizeof(int));
+	int i, j;
+	for(i = 1; i < 10; i++){
+		int res = plist_insert(list, list->len, &i, 4);
+		for(j = 0; j < i; j++){
+			printf("[%d]-", *(int*)plist_getItemBody(list, j));
+		}
+		printf("\n");
+	}
+	for(j = 0; j < list->len; j++){
+		printf("[%d]-", *(int*)plist_getItemBody(list, j));
+	}
+	printf("\n");
+	plist_destroy(list);
+	return 0;
 }
 	
