@@ -14,7 +14,6 @@ CC = gcc
 memo:
 	@echo "\tmake s : setup"
 	@echo "\tmake b : build"
-	@echo "\tmake r : build and run"
 	@echo "\tmake c : clean"
 
 $(ObjDir_cwd)/%.o: $(CwdDir)/%.c
@@ -26,12 +25,12 @@ $(ObjDir_lib)/%.o: $(LibDir)/%.c
 a.out: $(CwdObj) $(LibObj)
 	$(CC) $^ -o $@
 
-b: a.out
-
 s:
 	mkdir -p $(ObjDir_cwd)
 	mkdir -p $(ObjDir_lib)
 	
+b: a.out
+
 c:
 	rm -rd $(ObjDir_cwd)
 	rm -rd $(ObjDir_lib)
