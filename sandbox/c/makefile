@@ -2,7 +2,8 @@ CwdSrc = main
 LibSrc = plist term cst
 
 CwdDir = .
-LibDir = ../../clib
+LibSrcDir = ../../clib/src
+LibHdrDir = ../../clib/hdr
 
 ObjDir_cwd = ./obj/cwd
 ObjDir_lib = ./obj/lib
@@ -17,10 +18,10 @@ memo:
 	@echo "\tmake c : clean"
 
 $(ObjDir_cwd)/%.o: $(CwdDir)/%.c
-	$(CC) -c -o $@ $< -I$(LibDir)
+	$(CC) -c -o $@ $< -I$(LibHdrDir)
 
-$(ObjDir_lib)/%.o: $(LibDir)/%.c
-	$(CC) -c -o $@ $< -I$(LibDir)
+$(ObjDir_lib)/%.o: $(LibSrcDir)/%.c
+	$(CC) -c -o $@ $< -I$(LibHdrDir)
 
 a.out: $(CwdObj) $(LibObj)
 	$(CC) $^ -o $@

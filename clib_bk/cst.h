@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define cst_access(cstptr,idx) (*(&((*cstptr).body) + idx))
-#define cst_getptr(cstptr,idx)   (&((*cstptr).body) + idx)
+#define cst_getValue(cstptr,idx) (*(&((*cstptr).body) + idx))
+#define cst_getPtr(cstptr,idx)   (&((*cstptr).body) + idx)
 #define cst_isOOR(cstptr,idxVar) (cstptr->len <= idxVar)
 
 typedef struct _cst{
@@ -12,3 +12,4 @@ typedef struct _cst{
 
 cst *cst_make(int len);
 cst *cst_sizeup(cst *target);
+int cst_destroy(cst *target);

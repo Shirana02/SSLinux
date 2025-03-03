@@ -6,26 +6,34 @@ plistItem *_getItem_idx(plist *list, int idx){
 	int i;
 	for(i = 0; i < idx; i++){
 		if(currentPtr->next == NULL){
-			break;
+			return NULL;
 		}
 		currentPtr = currentPtr->next;
 	}
 	return currentPtr;
 }
 int _bindItem(plist *list, plistItem *item, int idx){
-	if(idx == 0){
-		if(list->len == 0){
-			list->idx_0 = item;
-		}else{
-			item->next = list->idx_0;
-			list->idx_0 = item;
+	if(list->len == 0){
+		list->idx_0 = item;
+		list->len++;
+		return 1;
+	}
+	if(idx <= 0){
+		item->next = list->idx_0;
+		list->idx_0 = item;
+	}else if(0 < idx && idx < list->len){
+		plistItem *prevItem = _getItem_idx(list, idx - 1);
+		if(prevItem == NULL){
+			return 0;
 		}
-	}else if(0 < idx){
-		plistItem *prevItem = _getItem_idx(list, idx);
 		plistItem *nextItem = prevItem->next;
 		item->next = nextItem;
 		prevItem->next = item;
 	}else{
+		plistItem *prevItem = _getItem_idx(list, list->len - 1);
+		plistItem *nextItem = NULL;
+		item->next = nextItem;
+		prevItem->next = item;
 		return 0;
 	}
 	list->len++;
@@ -46,10 +54,10 @@ plist *plist_make(){
 	return ret;
 }
 int  plist_insert(plist *list, int idx, void *dataPtr, int dataSize){
-	if(dataSize <= 0) return 0;
+	if(dataSize < 0) return 0;
 	int result;
 	void *body;
-	if(dataPtr != NULL){
+	if(dataSize != 0 && dataPtr != NULL){
 		 body = malloc(dataSize);
 		if(body == NULL) return 0;
 	}else{
@@ -58,14 +66,16 @@ int  plist_insert(plist *list, int idx, void *dataPtr, int dataSize){
 	plistItem *listItem;
 	listItem = malloc(sizeof(plistItem));
 	if(listItem == NULL){
-		if(dataPtr != NULL){
+		if(body != NULL){
 			free(body);
 		}
 		return 0;
 	}
 	listItem->next = NULL;
 	listItem->body = body;
-	memcpy(body, dataPtr, dataSize);
+	if(body != NULL){
+		memcpy(body, dataPtr, dataSize);
+	}
 	
 	result = _bindItem(list, listItem, idx);
 	if(result == 0){
@@ -103,7 +113,6 @@ void *plist_getItemBody(plist *list, int idx){
 	return target->body;
 }
 
-#include <stdio.h>
 int plist_destroy(plist *list){
 	int i;
 	plistItem *prevItem = NULL;
